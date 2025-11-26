@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4  # Postgres 16 + PostGIS 3.4 già configurato!
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: geodjango_db
+      POSTGRES_USER: geouser
+      POSTGRES_PASSWORD: geopassword
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:

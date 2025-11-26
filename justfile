@@ -1,8 +1,21 @@
 # Justfile
 
 # Avvia tutto (Backend + Frontend)
-dev:
-    just --parallel run-django run-vite
+dev: db
+    npx concurrently \
+      --names "DJANGO,VITE" \
+      --prefix-colors "green,magenta" \
+      --kill-others \
+      "just run-django" \
+      "just run-vite"
+
+# Ferma e pulisce tutto
+kill:
+    docker compose stop
+
+# Avvia il database (Idempotente: se è già su, non fa nulla)
+db:
+    docker compose up -d
 
 # Avvia Django server
 run-django:
@@ -13,9 +26,15 @@ run-vite:
     cd frontend && pnpm dev
 
 # Applica migrazioni
-migrate:
+migrate: db
     uv run python manage.py migrate
 
 # Crea superuser
-superuser:
+superuser: db
     uv run python manage.py createsuperuser
+
+# Reset totale (Utile in fase di sviluppo iniziale)
+reset-db:
+    docker compose down -v
+    docker compose up -d
+    just migrate
