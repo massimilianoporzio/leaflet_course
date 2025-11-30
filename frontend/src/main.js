@@ -40,16 +40,19 @@ function init() {
   });
 
   const baseLayers = {
-    'OpenStreetMap Standard': openstreetmapStandard,
+    '<b>OpenStreetMap Standard</b>': openstreetmapStandard,
     'Stadia Maps - Alidade Smooth Dark': stadiaMaps,
   };
 
   const layerControls = L.control
     .layers(
       baseLayers,
-      {},
+      {
+        // Aggiungi qui gli overlay se necessario
+      },
       {
         collapsed: true,
+        position: 'topright',
       }
     )
     .addTo(myMap);
