@@ -44,17 +44,57 @@ function init() {
     'Stadia Maps - Alidade Smooth Dark': stadiaMaps,
   };
 
+  // Griglia personalizzata con linee semplici
+  const gridLines = L.layerGroup();
+
+  function drawGrid() {
+    gridLines.clearLayers();
+    const zoom = myMap.getZoom();
+    let interval = 10;
+
+    if (zoom < 4) interval = 30;
+    else if (zoom < 6) interval = 10;
+    else if (zoom < 8) interval = 5;
+    else interval = 2;
+
+    // Linee di latitudine
+    for (let lat = -90; lat <= 90; lat += interval) {
+      const line = L.polyline(
+        [
+          [lat, -180],
+          [lat, 180],
+        ],
+        { color: '#666', weight: 1, opacity: 0.4, interactive: false }
+      );
+      gridLines.addLayer(line);
+    }
+
+    // Linee di longitudine
+    for (let lng = -180; lng <= 180; lng += interval) {
+      const line = L.polyline(
+        [
+          [-90, lng],
+          [90, lng],
+        ],
+        { color: '#666', weight: 1, opacity: 0.4, interactive: false }
+      );
+      gridLines.addLayer(line);
+    }
+  }
+
+  myMap.on('zoomend', drawGrid);
+  drawGrid();
+
+  const overlays = {
+    Griglia: gridLines,
+  };
+
   const layerControls = L.control
-    .layers(
-      baseLayers,
-      {
-        // Aggiungi qui gli overlay se necessario
-      },
-      {
-        collapsed: true,
-        position: 'topright',
-      }
-    )
+    .layers(baseLayers, overlays, {
+      collapsed: true,
+      position: 'topright',
+    })
     .addTo(myMap);
+
   console.log('Map initialized');
 }
